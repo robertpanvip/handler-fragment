@@ -29,7 +29,7 @@ All rights reserved.
         output: {
             path: path.join(__dirname, '../../dist'),
             filename: name,
-            library: 'ReactHandler',
+            library: 'HandlerFragment',
             libraryTarget: 'umd'
         },
         resolve: {
@@ -112,10 +112,10 @@ module.exports =function(){
         done()
     });
     gulp.task('webpack', (done) => {
-        webpackCompile(false,'react-handler.js',done)
+        webpackCompile(false,'handler-fragment.js',done)
     });
     gulp.task('minimize', (done) => {
-        webpackCompile(true,'react-handler.min.js',done)
+        webpackCompile(true,'handler-fragment.min.js',done)
     });
     gulp.task(
         'unpkg',

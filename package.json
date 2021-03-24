@@ -1,8 +1,8 @@
 {
-    "name": "react-handler",
+    "name": "handler-fragment",
     "version": "0.0.1",
     "description": "A React component for proxy its children's events",
-    "main": "dist/react-handler.min.js",
+    "main": "dist/handler-fragment.min.js",
     "module": "lib/index",
     "typings": "lib/index.d.ts",
     "scripts": {
@@ -14,13 +14,13 @@
         "publishNPM": "cd build/scripts &&node index.js publish",
         "doc": "typedoc src/index.tsx"
     },
-    "homepage": "https://github.com/robertpanvip/react-handler.git",
+    "homepage": "https://github.com/robertpanvip/handler-fragment.git",
     "repository": {
         "type": "git",
-        "url": "https://github.com/robertpanvip/react-handler.git"
+        "url": "https://github.com/robertpanvip/handler-fragment.git"
     },
     "bugs": {
-        "url": "https://github.com/robertpanvip/react-handler/issues"
+        "url": "https://github.com/robertpanvip/handler-fragment/issues"
     },
     "sideEffects": false,
     "keywords": [

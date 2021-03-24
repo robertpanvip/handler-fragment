@@ -1,11 +1,11 @@
 📦 **Installation**
 ``` javascript
-npm install react-handler
+npm install handler-fragment
 ```
 🔨 **Usage**
 ``` javascript
 /**demo1**/
-import {OutSide} from 'react-handler';
+import {OutSide} from 'handler-fragment';
 function MyComponent() {
   return (
     <OutSide
@@ -19,7 +19,7 @@ function MyComponent() {
 }
 
 /**demo2**/
-import {OutSide} from 'react-handler';
+import {OutSide} from 'handler-fragment';
 /**
  * FocusWithin  It's very similar to the Pseudo class :focus-within
  *
@@ -36,7 +36,7 @@ function MyComponent2() {
 }
 
 /**demo3**/
-import {Handler} from 'react-handler';
+import {Handler} from 'handler-fragment';
 /**
  * The function of the handler is to render not only children, but also click events in the proxy children
  * It is equivalent to rendering < div > {children} < / div > but deleting the div after the first rendering
@@ -59,7 +59,7 @@ function MyComponent3() {
 
 ```
 🖥 **API**
-###FocusWithin
+##FocusWithin
 ``` javascript
 interface FocusWithinProps {
     children: React.ReactElement;
@@ -73,7 +73,7 @@ export default class FocusWithin extends React.PureComponent<FocusWithinProps> {
     render(): React.ReactNode;
 }
 ```
-###Handler
+##Handler
 ``` javascript
 interface HandlerProps extends React.DOMAttributes<HTMLElement> {
     children: React.ReactElement;
@@ -86,7 +86,7 @@ export default class Handler extends React.PureComponent<HandlerProps> {
     render(): React.ReactNode;
 }
 ```
-###FocusWithin
+##FocusWithin
 ``` javascript
 interface OutSideProps {
     children?: JSX.Element;
