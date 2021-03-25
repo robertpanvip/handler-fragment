@@ -23,7 +23,7 @@ function MyComponent() {
 }
 
 /**OutSide Demo2**/
-import {OutSide} from 'handler-fragment';
+import {FocusWithin} from 'handler-fragment';
 /**
  * FocusWithin  It's very similar to the Pseudo class :focus-within
  *
