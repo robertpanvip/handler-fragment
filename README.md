@@ -1,10 +1,14 @@
+📦 **Description**
+
+The 'Handler' Component is like React.Fragment and you can add React composite events and you can get a DOM reference by ref
+
 📦 **Installation**
 ``` javascript
 npm install handler-fragment
 ```
 🔨 **Usage**
 ``` javascript
-/**demo1**/
+/**OutSide Demo1**/
 import {OutSide} from 'handler-fragment';
 function MyComponent() {
   return (
@@ -18,7 +22,7 @@ function MyComponent() {
   );
 }
 
-/**demo2**/
+/**OutSide Demo2**/
 import {OutSide} from 'handler-fragment';
 /**
  * FocusWithin  It's very similar to the Pseudo class :focus-within
@@ -35,7 +39,7 @@ function MyComponent2() {
   );
 }
 
-/**demo3**/
+/**Handler Demo3**/
 import {Handler} from 'handler-fragment';
 /**
  * The function of the handler is to render not only children, but also click events in the proxy children
@@ -58,8 +62,9 @@ function MyComponent3() {
 }
 
 ```
-🖥 **API**
-##FocusWithin
+🖥 ****API****
+
+**FocusWithin**
 ``` javascript
 interface FocusWithinProps {
     children: React.ReactElement;
@@ -73,7 +78,7 @@ export default class FocusWithin extends React.PureComponent<FocusWithinProps> {
     render(): React.ReactNode;
 }
 ```
-##Handler
+ **Handler**
 ``` javascript
 interface HandlerProps extends React.DOMAttributes<HTMLElement> {
     children: React.ReactElement;
@@ -86,7 +91,7 @@ export default class Handler extends React.PureComponent<HandlerProps> {
     render(): React.ReactNode;
 }
 ```
-##FocusWithin
+ **FocusWithin**
 ``` javascript
 interface OutSideProps {
     children?: JSX.Element;
