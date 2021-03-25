@@ -26,7 +26,11 @@
     "keywords": [
         "handler",
         "focus-within",
-        "outsideclick"
+        "outside-click",
+        "fragment",
+        "event-fragment",
+        "ref",
+        "findDOMNode"
     ],
     "files": [
         "dist",
