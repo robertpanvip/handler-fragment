@@ -60,7 +60,7 @@ module.exports = async function () {
     });
 
     gulp.task('publish', function (cb) {
-        log('git publish--');
+        log('npm publish--');
         runCmd(`cd ${config.baseDir} & npm publish`, cb);
     });
 
