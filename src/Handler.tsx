@@ -48,7 +48,6 @@ export default class Handler extends React.PureComponent<HandlerProps> {
     private readonly directlyRef: RefObject<Node>;
 
     private el: React.RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
-    state: { parentNode?: HTMLElement } = {};
     private readonly key: string;
     private parentNode: ParentNode;
     private removedSibling: ChildNode;
@@ -84,13 +83,7 @@ export default class Handler extends React.PureComponent<HandlerProps> {
             disabled,
             onBeforeReplace,
             onAfterReplace,
-            children,
         } = this.props;
-
-        const count = React.Children.count(children);
-        if (count !== 1 && children) {
-            return;
-        }
         const {parentNode, childNodes} = this.el.current;
         this.parentNode = parentNode;
         this.childNodes = Array.from(childNodes);
@@ -318,10 +311,8 @@ export default class Handler extends React.PureComponent<HandlerProps> {
         const {children, disabled} = this.props;
         const count = React.Children.count(children);
         if (count !== 1 && children) {
-            warning(false, 'HandlerElement', '该组件只能传入一个children');
-            return children
+            warning(false, 'Handler', 'Since this component passes more than one child, the ref it gets can only get the first one');
         }
-
         let omitProps = omit(
             this.props,
             [

@@ -41,7 +41,7 @@ export default class FocusWithin extends React.PureComponent<FocusWithinProps> {
     private handleFocus(): void {
         const {disabled,focusClassName} = this.props;
         if (!disabled) {
-            classList(this.el.current as HTMLElement).add(focusClassName)
+            classList(this.el.current as HTMLElement).toggle(focusClassName)
         }
 
     }
@@ -52,7 +52,7 @@ export default class FocusWithin extends React.PureComponent<FocusWithinProps> {
     private handleBlur() {
         const {disabled,focusClassName} = this.props;
         if (!disabled) {
-            classList(this.el.current as HTMLElement).remove(focusClassName)
+            classList(this.el.current as HTMLElement).toggle(focusClassName)
         }
     }
 
@@ -63,10 +63,10 @@ export default class FocusWithin extends React.PureComponent<FocusWithinProps> {
         const {children} = this.props;
 
         const count = React.Children.count(children);
-        if (count !== 1) {
+        /*if (count !== 1) {
             warning(false, 'FocusWidthIn', '不应该传入一个数组');
             return children
-        }
+        }*/
         return (
             <Handler
                 ref={this.el}

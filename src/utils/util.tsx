@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {findDOMNode} from 'react-dom';
-export  interface RefObject<T> {
+
+export interface RefObject<T> {
     current: T | null;
 }
 
@@ -70,37 +71,43 @@ export function once(fn: (...params: any) => void, context?: any): (...params: a
 /**
  * 类似于dom的classList
  */
-export function classList(dom: HTMLElement) {
+export function classList(dom: Element): Pick<DOMTokenList, 'add' | 'remove' | 'toggle' | 'contains'> {
     const _dom = dom;
-    let classes = dom?.className?.trim().split(/\s+/g) || [];
+    let classes: Array<string> = dom?.className?.trim().split(/\s+/g) || [];
     return {
-        add(...params: any) {
-            classes.push(params);
+        add(...params: string[]): void {
+            (classes as Array<any>).push(params);
             classes = classes.flat();
-            _dom && (_dom.className = classes.join(' '));
+            _dom && (_dom.className = classes.join(' ').trim());
         },
-        remove(...params: string[]) {
+        remove(...params: string[]): void {
             params.forEach((param = '') => {
                 const index = classes.indexOf(param);
                 if (index !== -1) {
                     classes.splice(index, 1)
                 }
             });
-            _dom && (_dom.className = classes.join(' '));
+            if (_dom && classes.length === 0) {
+                return _dom.removeAttribute('class');
+            }
+            _dom && (_dom.className = classes.join(' ').trim());
         },
-        toggle(...params: string[]) {
-            params.forEach((param = '') => {
-                const index = classes.indexOf(param);
-                if (index !== -1) {
-                    classes.push(param);
-                } else {
-                    classes.splice(index, 1)
-                }
-            });
-            _dom && (_dom.className = classes.join(' '));
+        toggle(token: string, force?: boolean): boolean {
+            const index = classes.indexOf(token);
+            if (index === -1) {
+                classes.push(token);
+            } else if (!force) {
+                classes.splice(index, 1)
+            }
+            if (_dom && classes.length === 0) {
+                _dom.removeAttribute('class');
+                return true
+            }
+            _dom && (_dom.className = classes.join(' ').trim());
+            return true;
         },
-        contains(...params: string[]) {
-            return classes.find(item => params.find(it => it === item))
+        contains(token: string): boolean {
+            return !!classes.find(item => token === item)
         }
     }
 
