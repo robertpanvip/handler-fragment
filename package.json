@@ -1,7 +1,7 @@
 {
     "name": "handler-fragment",
-    "version": "0.0.2",
-    "description": "A React component for proxy its children's events",
+    "version": "0.0.3",
+    "description": "The 'Handler' Component is like React.Fragment and you can add React composite events and you can get a DOM reference by ref",
     "main": "dist/handler-fragment.min.js",
     "module": "lib/index",
     "typings": "lib/index.d.ts",
