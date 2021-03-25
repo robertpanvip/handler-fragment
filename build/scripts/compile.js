@@ -5,6 +5,7 @@ const ts = require('gulp-typescript');
 const plumber = require('gulp-plumber');
 const logger = require('gulp-logger');
 const { runTask,deleteFolder } = require("./util");
+const tsconfig = require('../../tsconfig.json');
 
 module.exports = function () {
     gulp.task('clean', async (done) => {
@@ -22,22 +23,7 @@ module.exports = function () {
             extname: '.ts',
             showChange: true
         }))
-            .pipe(ts({
-                sourceMap: false,
-                noImplicitAny: true,
-                strictNullChecks: false,
-                module: "commonjs",
-                target: "ESNext",
-                jsx: "react",
-                experimentalDecorators: true,
-                emitDecoratorMetadata: true,
-                moduleResolution: "node",
-                removeComments: true,
-                allowJs: true,
-                declaration: true,
-                esModuleInterop: true,
-                allowSyntheticDefaultImports: true
-            }))
+            .pipe(ts(tsconfig.compilerOptions))
             .dts
             .pipe(logger({
                 before: 'write tsd ...',
