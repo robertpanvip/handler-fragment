@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {FocusWithin, Handler, OutSide} from "../src";
+import {FocusWithin, OutSide} from "../src";
+import Handler from "../src";
 
 class Test extends React.PureComponent {
 

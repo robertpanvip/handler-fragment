@@ -1,6 +1,6 @@
 {
     "name": "handler-fragment",
-    "version": "0.0.5",
+    "version": "1.0.3",
     "description": "The 'Handler' Component is like React.Fragment and you can add React composite events and you can get a DOM reference by ref",
     "main": "dist/handler-fragment.min.js",
     "module": "lib/index",
@@ -112,5 +112,8 @@
         "webpack-cli": "^3.3.12",
         "webpack-dev-server": "^3.11.0",
         "webpackbar": "^4.0.0"
+    },
+    "dependencies": {
+        "@babel/runtime": "latest"
     }
 }

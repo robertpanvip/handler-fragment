@@ -53,7 +53,7 @@ interface Ins {
  *
  * @constructor
  */
-function HandlerFragment(props: HandlerProps, ref: any): React.ReactElement {
+function HandlerFragment(props: HandlerProps, ref?: any): React.ReactElement {
     const el = useRef<HTMLDivElement>(null)
     const ins = useRef<Ins>({
         key: UUID(),
@@ -63,6 +63,9 @@ function HandlerFragment(props: HandlerProps, ref: any): React.ReactElement {
          * @param node
          */
         assignmentRef: (node: Node): void => {
+            if(!ref){
+                return;
+            }
             if (ref instanceof Function) {
                 ref(node)
             } else {
