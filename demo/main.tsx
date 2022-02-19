@@ -29,7 +29,7 @@ class Test extends React.PureComponent {
                     <div>123</div>
                 </Handler>
                 <FocusWithin>
-                    <div><input/></div>
+                    <div className="form-control"><input /></div>
                 </FocusWithin>
                 <OutSide
                     onOutSideClick={() => {

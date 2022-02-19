@@ -1,7 +1,6 @@
 import * as React from 'react';
-import autoBind from "./utils/autoBind";
 import warning from "./utils/warning";
-import Handler from "./handler";
+import Handler from "./Handler";
 import {classList} from "./utils/util";
 
 interface FocusWithinProps {
@@ -29,7 +28,6 @@ FocusEvent.prototype.stopPropagation = function (...rest) {
  * 该组件的功能是类似于css伪类:focus-within
  * 即当前组件包裹的children的子组件获得焦点、那么当前组件包裹的children就会添加is-focus类
  */
-@autoBind
 export default class FocusWithin extends React.PureComponent<FocusWithinProps> {
     private el = React.createRef<any>();
     static defaultProps = {
@@ -67,7 +65,7 @@ export default class FocusWithin extends React.PureComponent<FocusWithinProps> {
     /**
      * 处理聚焦
      */
-    private handleFocus(): void {
+    private handleFocus: () => void = () => {
         const {disabled, focusClassName} = this.props;
         if (!disabled) {
             const classes = classList(this.el.current as HTMLElement)
@@ -80,7 +78,7 @@ export default class FocusWithin extends React.PureComponent<FocusWithinProps> {
     /**
      * 处理失去焦点
      */
-    private handleBlur() {
+    private handleBlur = () => {
         const {disabled, focusClassName} = this.props;
         if (!disabled) {
             const classes = classList(this.el.current as HTMLElement)
