@@ -1,5 +1,5 @@
 import React, {useRef, useEffect, useContext, forwardRef} from 'react';
-import { once as onceFn} from "./utils/util";
+import {once as onceFn} from "./utils/util";
 import {findDOMNode} from 'react-dom';
 import warning from "./utils/warning";
 import EventTarget from "./utils/event"
@@ -31,6 +31,7 @@ interface Instance {
     onceClick?: (e: MouseEvent) => void,
     triggerInner?: boolean,
     isPropagationStopped?: boolean,
+    pointerEvents?:string
 }
 
 type ForwardRef<T> = (instance: T) => void | React.MutableRefObject<T> | React.RefObject<T> | null;
@@ -271,7 +272,15 @@ const RefRenderFunction = function <T>(props: OutSideProps, forward: ForwardRef<
             }}
         >
             <Handler
-                ref={ref}
+                ref={(insRef) => {
+                    ref.current = insRef
+                    if(insRef){
+                        const _style = getComputedStyle(insRef as HTMLElement);
+                        if(_style.pointerEvents==='none'){
+                            warning(false, 'OutSide', '节点的样式 pointerEvents = none 导致onOutSideClick失效',insRef)
+                        }
+                    }
+                }}
                 onClick={handleInnerClick}
                 onFocus={onFocus}
                 onBlur={onBlur}
@@ -285,7 +294,7 @@ const RefRenderFunction = function <T>(props: OutSideProps, forward: ForwardRef<
     )
 }
 
-const OutSide = forwardRef<any,OutSideProps>(RefRenderFunction)
+const OutSide = forwardRef<any, OutSideProps>(RefRenderFunction)
 
 OutSide.displayName = 'OutSide';
 
