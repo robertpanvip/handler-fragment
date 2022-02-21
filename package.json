@@ -2,8 +2,9 @@
     "name": "handler-fragment",
     "version": "1.0.4",
     "description": "The 'Handler' Component is like React.Fragment and you can add React composite events and you can get a DOM reference by ref",
-    "main": "dist/handler-fragment.min.js",
-    "module": "lib/index",
+    "unpkg": "dist/handler-fragment.min.js",
+    "main": "lib/index",
+    "module": "es/index",
     "typings": "lib/index.d.ts",
     "scripts": {
         "test": "jest --colors -u --coverage",
@@ -34,7 +35,8 @@
     ],
     "files": [
         "dist",
-        "lib"
+        "lib",
+        "es"
     ],
     "author": "pan",
     "license": "ISC",
