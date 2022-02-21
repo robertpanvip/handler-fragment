@@ -1,53 +1,13 @@
-import * as React from 'react';
-import {findDOMNode} from 'react-dom';
-
-export interface RefObject<T> {
-    current: T | null;
-}
 
 /**
  * 随机生成UUID
  */
-export function UUID(): any {
+export function UUID(): string {
     return 'uuid-xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         const r = Math.random() * 16 | 0,
             v = c === 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
     });
-}
-
-/**
- * 合并函数形式的ref和对象形式的ref
- * @param props
- * @param forceDom 是否将结果统一转成原始Dom
- */
-export function combineRef<T>(props: any, forceDom = false): RefObject<T> {
-    let ref = props.forwardRef || React.createRef();
-    if (ref instanceof Function) {
-        const originFn = ref;
-        let current: HTMLElement;
-        ref = function (ref: any) {
-            originFn.bind(this)(ref);
-            current = ref;
-        };
-        Object.defineProperty(ref, 'current', {
-            get(): Element | Text {
-                return forceDom ? findDOMNode(current) : current
-            }
-        })
-    } else if (forceDom) {
-        const objRef = ref;
-        ref = {current: null};
-        Object.defineProperty(ref, 'current', {
-            get(): Element | Text {
-                return findDOMNode(objRef.current);
-            },
-            set(v: any) {
-                objRef.current = v;
-            }
-        })
-    }
-    return ref
 }
 
 /**

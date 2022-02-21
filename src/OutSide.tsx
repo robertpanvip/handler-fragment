@@ -1,19 +1,19 @@
-import * as React from 'react';
-import {combineRef, once as onceFn} from "./utils/util";
+import React, {useRef, useEffect, useContext, forwardRef} from 'react';
+import { once as onceFn} from "./utils/util";
 import {findDOMNode} from 'react-dom';
 import warning from "./utils/warning";
 import EventTarget from "./utils/event"
 import Handler from "./Handler";
-import {forwardRef} from "./utils/ref";
 
 interface OutSideProps {
-    children?: JSX.Element,
     onOutSideClick?: (e: React.MouseEvent) => void
     onClick?: (e: React.MouseEvent) => void
     onMouseEnter?: (e: React.MouseEvent) => void
     onMouseLeave?: (e: React.MouseEvent) => void
     onFocus?: (e: React.FocusEvent) => void
-    onBlur?: (e: React.FocusEvent) => void
+    onBlur?: (e: React.FocusEvent) => void,
+
+    children?: JSX.Element,
     /**
      * 触发时机 默认为inner
      * inner :只有当你鼠标点击目标后然后鼠标再次点击非目标地方的时候触发
@@ -24,9 +24,17 @@ interface OutSideProps {
     triggerTiming?: 'inner' | 'outside',
 
     /**是否只执行一次**/
-    once: boolean,
-    forwardRef?: any
+    once?: boolean,
 }
+
+interface Instance {
+    onceClick?: (e: MouseEvent) => void,
+    triggerInner?: boolean,
+    isPropagationStopped?: boolean,
+}
+
+type ForwardRef<T> = (instance: T) => void | React.MutableRefObject<T> | React.RefObject<T> | null;
+type _Window = typeof window & { __observerDocument__: boolean }
 
 const EVENT_ATTR = [
     'currentTarget',
@@ -68,81 +76,85 @@ function documentClickHandler(e: MouseEvent) {
     target.dispatchEvent('click', e);
 }
 
-if (!(window as any).__observerDocument__) {
+
+if (!(window as _Window).__observerDocument__) {
     /**确保只监听一次**/
     /**由于react的合成事件也是监听的document 这里想要让documentClickHandler 必须先于react的合成事件之前就必须先于构造函数之前执行**/
     document.addEventListener('click', documentClickHandler, true);
     /**确保只监听一次**/
-    (window as any).__observerDocument__ = true;
+    (window as _Window).__observerDocument__ = true;
 }
+
 const OutSideContext = React.createContext(undefined);
+
 OutSideContext.displayName = 'OutSideContext';
-/**
- * 用于判断点击的地点是否在children中
- */
-@forwardRef()
-export default class OutSide extends React.Component<OutSideProps> {
-    state = {};
 
-    private readonly el: React.RefObject<any>;
 
-    static contextType = OutSideContext;
+const RefRenderFunction = function <T>(props: OutSideProps, forward: ForwardRef<T>) {
 
-    static defaultProps = {
-        triggerTiming: 'inner',
-        once: true
-    };
+    let {children} = props;
 
-    /**是否点击了children**/
-    private triggerInner: boolean;
-    /**只执行一次的onOutSideClick**/
-    private onceClick: (...params: any[]) => any;
-    private isPropagationStopped = false;
+    const {
+        onFocus,
+        onBlur,
+        onOutSideClick,
+        onClick,
+        onMouseEnter,
+        onMouseLeave,
+        triggerTiming = 'inner',
+        once = true,
+    } = props;
 
-    /**
-     *
-     * @param props
-     */
-    constructor(props: OutSideProps) {
-        super(props);
+    if (typeof children !== 'object') {
+        children = <span>{children}</span>;
+        warning(false, 'OutSide', '传入的children不是JSX.Element类型的值')
+    }
 
-        this.el = combineRef(props);
+    const context = useContext(OutSideContext);
 
+    const ins = useRef<Instance>({})
+
+    let ref: any = useRef({})
+
+    if (forward) {
+        if (forward instanceof Function) {
+            const originFn = forward;
+            let current: HTMLElement;
+            ref = function (ref: any) {
+                originFn.bind(this)(ref);
+                current = ref;
+            };
+            Object.defineProperty(ref, 'current', {
+                get(): Element | Text {
+                    return findDOMNode(current)
+                }
+            })
+        } else {
+            ref = forward
+        }
     }
 
     /***
      * 组件加载后
      */
-    componentDidMount(): void {
-        const {
-            onOutSideClick,
-            onClick
-        } = this.props;
+    useEffect(() => {
         if (onOutSideClick || onClick) {
-            this.generateOnce();
-            target.addEventListener('click', this.handleCallback);
+            generateOnce();
+            target.addEventListener('click', handleCallback);
         }
-    }
+        return () => {
+            target.removeEventListener('click', handleCallback);
+        }
+    }, [])
 
     /**
      * 生成一次执行函数
      */
-    generateOnce: () => void = () => {
-        const {
-            onOutSideClick,
-            once,
-        } = this.props;
+    const generateOnce: () => void = () => {
         /**是否只能点击一次**/
         if (once) {
-            this.onceClick = onceFn(onOutSideClick);
+            ins.current.onceClick = onceFn(onOutSideClick);
         }
-    }
-
-    /**
-     * 组件将要卸载
-     */
-    componentWillUnmount(): void {
-        target.removeEventListener('click', this.handleCallback);
     }
 
 
@@ -150,13 +162,11 @@ export default class OutSide extends React.Component<OutSideProps> {
      * 处理鼠标进入
      * @param e
      */
-    handleMouseEnter: (e: React.MouseEvent) => void = (e) => {
+    const handleMouseEnter: (e: React.MouseEvent) => void = (e) => {
         /**事件确保这里只需要在目标元素执行**/
-        if (findDOMNode(this.el.current).contains(e.target as HTMLElement)) {
+        if (ref.current && findDOMNode(ref.current).contains(e.target as HTMLElement)) {
 
-            this.triggerInner = true;
-
-            const {onMouseEnter} = this.props;
+            ins.current.triggerInner = true;
 
             onMouseEnter && onMouseEnter(e)
         }
@@ -167,11 +177,9 @@ export default class OutSide extends React.Component<OutSideProps> {
      * 处理鼠标进入
      * @param e
      */
-    handleMouseLeave: (e: React.MouseEvent) => void = (e) => {
+    const handleMouseLeave: (e: React.MouseEvent) => void = (e) => {
         /**事件确保这里只需要在目标元素执行**/
-        if (findDOMNode(this.el.current).contains(e.target as HTMLElement)) {
-
-            const {onMouseLeave} = this.props;
+        if (ref.current && findDOMNode(ref.current).contains(e.target as HTMLElement)) {
 
             onMouseLeave && onMouseLeave(e)
         }
@@ -182,8 +190,8 @@ export default class OutSide extends React.Component<OutSideProps> {
      * 生成event
      * @param e
      */
-    generateEvent: (e: MouseEvent) => React.MouseEvent = (e) => {
-        const {stopPropagation} = this.context || {};
+    const generateEvent: (e: MouseEvent) => React.MouseEvent = (e) => {
+        const {stopPropagation} = context;
         let isPropagationStopped = false;
         const event = {
             stopPropagation() {
@@ -214,26 +222,25 @@ export default class OutSide extends React.Component<OutSideProps> {
     /**
      * 处理组价的事件
      */
-    handleCallback: (e: MouseEvent) => void = (e) => {
+    const handleCallback: (e: MouseEvent) => void = (e) => {
 
-        const {triggerTiming, onOutSideClick} = this.props;
-        const current = findDOMNode(this.el.current);
+        const current = findDOMNode(ref.current);
         /**ie中不存在e.target 只有e.srcElement**/
         if (!current.contains((e.target || e.srcElement) as Node)) {
 
-            if (triggerTiming === 'outside' || (triggerTiming === 'inner' && this.triggerInner)) {
+            if (triggerTiming === 'outside' || (triggerTiming === 'inner' && ins.current.triggerInner)) {
                 let callback: (e: MouseEvent) => void;
                 /**是否只执行一次**/
-                if (this.props.once) {
+                if (once) {
                     /**取出this.onceClick等函数**/
-                    callback = this.onceClick;
+                    callback = ins.current.onceClick;
                     /**执行this.onceClick等函数**/
                     callback && callback(e);
                     /**表示当前是没有点击children**/
-                    this.triggerInner = false;
+                    ins.current.triggerInner = false;
                 } else {
                     /**如果不是执行一次那么就使用传下来的callback**/
-                    !this.isPropagationStopped && onOutSideClick && onOutSideClick(this.generateEvent(e))
+                    !ins.current.isPropagationStopped && onOutSideClick && onOutSideClick(generateEvent(e))
                 }
             }
         }
@@ -243,53 +250,43 @@ export default class OutSide extends React.Component<OutSideProps> {
      *处理内部点击
      * @param e
      */
-    handleInnerClick: (e: React.MouseEvent<HTMLSpanElement>) => void = (e) => {
-        this.triggerInner = true;
-        this.generateOnce();
+    const handleInnerClick: (e: React.MouseEvent<HTMLSpanElement>) => void = (e) => {
+        ins.current.triggerInner = true;
 
-        const {onClick} = this.props;
+        generateOnce();
 
         onClick && onClick(e)
     }
 
-    /**
-     * 渲染函数
-     */
-    render(): React.ReactNode {
-        let {children} = this.props;
+    const childProps = {
+        ...children.props
+    };
 
-        const {
-            onFocus,
-            onBlur
-        } = this.props;
-
-        if (typeof children !== 'object') {
-            children = <span>{children}</span>;
-            warning(false, 'OutSide', '传入的children不是JSX.Element类型的值')
-        }
-        const childProps = {
-            ...children.props
-        };
-        return (
-            <OutSideContext.Provider
-                value={{
-                    stopPropagation: () => {
-                        this.isPropagationStopped = true;
-                    }
-                }}
+    return (
+        <OutSideContext.Provider
+            value={{
+                stopPropagation: () => {
+                    ins.current.isPropagationStopped = true;
+                }
+            }}
+        >
+            <Handler
+                ref={ref}
+                onClick={handleInnerClick}
+                onFocus={onFocus}
+                onBlur={onBlur}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
             >
-                <Handler
-                    ref={this.el}
-                    onClick={this.handleInnerClick}
-                    onFocus={onFocus}
-                    onBlur={onBlur}
-                    onMouseEnter={this.handleMouseEnter}
-                    onMouseLeave={this.handleMouseLeave}
-                >
-                    {React.cloneElement(children, childProps)}
-                </Handler>
-            </OutSideContext.Provider>
+                {React.cloneElement(children, childProps)}
+            </Handler>
+        </OutSideContext.Provider>
 
-        )
-    }
+    )
 }
+
+const OutSide = forwardRef<any,OutSideProps>(RefRenderFunction)
+
+OutSide.displayName = 'OutSide';
+
+export default OutSide;

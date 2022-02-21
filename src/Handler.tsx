@@ -11,9 +11,6 @@ interface HandlerProps extends React.DOMAttributes<HTMLElement> {
     onBeforeReplace?: (current: HTMLElement) => void,
     /**在替换之后的处理**/
     onAfterReplace?: () => void,
-
-    /**私有属性不可使用**/
-    forwardRef?: any
 }
 
 type MethodsCallback = 'insertBeforeCallbacks' | 'replaceChildCallbacks' | 'removeChildCallbacks'
@@ -135,7 +132,6 @@ function HandlerFragment(props: HandlerProps, ref?: any): React.ReactElement {
             'onAfterReplace',
             'disabled',
             'children',
-            'forwardRef'
         ]);
     if (disabled) {
         omitProps = {}
@@ -331,4 +327,4 @@ function HandlerFragment(props: HandlerProps, ref?: any): React.ReactElement {
     )
 }
 
-export default forwardRef(HandlerFragment)
+export default forwardRef<any,HandlerProps>(HandlerFragment)

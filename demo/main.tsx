@@ -1,7 +1,5 @@
 import * as React from 'react';
-import {FocusWithin, OutSide} from "../src";
-import Handler from "../src";
-
+import {OutSide, FocusWithin, Handler} from "../src";
 class Test extends React.PureComponent {
 
     state = {};
@@ -11,6 +9,7 @@ class Test extends React.PureComponent {
      *
      */
     componentDidMount() {
+        console.log(this.ref);
     }
 
     /**
@@ -20,8 +19,9 @@ class Test extends React.PureComponent {
         return (
             <div ref={this.ref}>
                 <Handler
+
                     ref={(ref) => {
-                        console.log('You will get the divs ref !!!',ref);
+                        console.log('You will get the divs ref !!!', ref);
                     }}
                     onClick={(e) => {
                         console.log('any event you can add to handler ');
@@ -29,15 +29,16 @@ class Test extends React.PureComponent {
                 >
                     <div>123</div>
                 </Handler>
-                <FocusWithin>
-                    <div className="form-control"><input /></div>
+                <FocusWithin >
+                    <div className="form-control"><input/></div>
                 </FocusWithin>
                 <OutSide
+                    ref={this.ref}
                     onOutSideClick={() => {
                         alert('You clicked outside of this component!!!');
                     }}
                 >
-                    <span>Hello World</span>
+                    <div style={{border: '1px solid',width:200,height:200}} />
                 </OutSide>
             </div>
         );
