@@ -26,6 +26,14 @@ module.exports = async function () {
         log(`删除 ${config.baseDir}/dist 开始`)
         await deleteFolder(`${config.baseDir}/dist`);
         log(`删除 ${config.baseDir}/dist 结束`)
+
+        log(`删除 ${config.baseDir}/lib 开始`)
+        await deleteFolder(`${config.baseDir}/lib`);
+        log(`删除 ${config.baseDir}/lib 结束`)
+
+        log(`删除 ${config.baseDir}/es 开始`)
+        await deleteFolder(`${config.baseDir}/es`);
+        log(`删除 ${config.baseDir}/es 结束`)
         cb();
     });
     gulp.task('copy-info', () => {
@@ -58,6 +66,15 @@ module.exports = async function () {
             }))
             .pipe(gulp.dest(`${config.baseDir}/lib`));
     });
+    gulp.task('copy-es', () => {
+        return gulp.src('../../es/**')
+            .pipe(logger({
+                before: 'copy es...',
+                after: 'copy es complete!',
+                showChange: false
+            }))
+            .pipe(gulp.dest(`${config.baseDir}/es`));
+    });
 
     gulp.task('publish', function (cb) {
         log('npm publish--');
@@ -66,7 +83,7 @@ module.exports = async function () {
 
     gulp.task(
         'publish',
-        gulp.series('clean', 'del-dist','copy-info', 'copy-dist', 'copy-lib','publish')
+        gulp.series('clean', 'del-dist','copy-info', 'copy-dist','copy-es', 'copy-lib','publish')
     );
 
     runTask('publish')
