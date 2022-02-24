@@ -192,6 +192,9 @@ const RefRenderFunction = function <T>(props: OutSideProps, forward: ForwardRef<
      * @param e
      */
     const generateEvent: (e: MouseEvent) => React.MouseEvent = (e) => {
+        if(!context){
+            return e as unknown as React.MouseEvent;
+        }
         const {stopPropagation} = context;
         let isPropagationStopped = false;
         const event = {
