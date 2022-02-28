@@ -113,9 +113,9 @@ const RefRenderFunction = function <T>(props: OutSideProps, forward: ForwardRef<
 
     const context = useContext(OutSideContext);
 
-    const ins = useRef<Instance>({})
+    const ins = useRef<Instance>(null)
 
-    let ref: any = useRef({})
+    let ref: any = useRef(null)
 
     if (forward) {
         if (forward instanceof Function) {
