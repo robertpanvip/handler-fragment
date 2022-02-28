@@ -113,7 +113,7 @@ const RefRenderFunction = function <T>(props: OutSideProps, forward: ForwardRef<
 
     const context = useContext(OutSideContext);
 
-    const ins = useRef<Instance>(null)
+    const ins = useRef<Instance>({})
 
     let ref: any = useRef(null)
 
