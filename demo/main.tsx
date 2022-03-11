@@ -17,7 +17,7 @@ class Test extends React.PureComponent {
      */
     render() {
         return (
-            <div ref={this.ref}>
+            <div >
                 <Handler
 
                     ref={(ref) => {
