@@ -229,6 +229,13 @@ const RefRenderFunction = function <T>(props: OutSideProps, forward: ForwardRef<
     const handleCallback: (e: MouseEvent) => void = (e) => {
 
         const {current} = ref;
+        if(current){
+            const _style = getComputedStyle(current as HTMLElement);
+            if(_style.pointerEvents==='none'){
+                warning(false, 'OutSide', '节点的样式 pointerEvents = none 导致onOutSideClick失效',current as HTMLElement)
+            }
+        }
+
         /**ie中不存在e.target 只有e.srcElement**/
         if (!current.contains((e.target || e.srcElement) as Node)) {
 
@@ -275,15 +282,7 @@ const RefRenderFunction = function <T>(props: OutSideProps, forward: ForwardRef<
             }}
         >
             <Handler
-                ref={(insRef) => {
-                    ref.current = insRef
-                    if(insRef){
-                        const _style = getComputedStyle(insRef as HTMLElement);
-                        if(_style.pointerEvents==='none'){
-                            warning(false, 'OutSide', '节点的样式 pointerEvents = none 导致onOutSideClick失效',insRef as HTMLElement)
-                        }
-                    }
-                }}
+                ref={ref}
                 onClick={handleInnerClick}
                 onFocus={onFocus}
                 onBlur={onBlur}
