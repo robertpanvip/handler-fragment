@@ -1,6 +1,6 @@
 {
     "name": "handler-fragment",
-    "version": "1.0.9",
+    "version": "1.0.10",
     "description": "The 'Handler' Component is like React.Fragment and you can add React composite events and you can get a DOM reference by ref",
     "unpkg": "dist/handler-fragment.min.js",
     "main": "lib/index",
